@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAction } from "convex/react";
-import { api } from "../convex/_generated/api";
+//import { useAction } from "convex/react";
+// import { api } from "convex/_generated/api";
 
 const LearningPreferences = () => {
   // State to store selected preferences and search input
