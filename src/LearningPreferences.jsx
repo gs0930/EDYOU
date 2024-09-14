@@ -24,6 +24,37 @@ const LearningPreferences = () => {
     e.preventDefault();
   };
 
+  const renderOutputBoxes = () => {
+    return (
+      <>
+        {preferences.includes('Visual') && (
+          <div className="output-box visual-box">
+            <h3>Visual Resources</h3>
+            <p>Displaying visual content related to "{searchInput}".</p>
+          </div>
+        )}
+        {preferences.includes('Textual') && (
+          <div className="output-box textual-box">
+            <h3>Textual Resources</h3>
+            <p>Displaying textual content related to "{searchInput}".</p>
+          </div>
+        )}
+        {preferences.includes('Audio') && (
+          <div className="output-box audio-box">
+            <h3>Audio Resources</h3>
+            <p>Playing audio content related to "{searchInput}".</p>
+          </div>
+        )}
+        {preferences.includes('Kinesthetic') && (
+          <div className="output-box kinesthetic-box">
+            <h3>Kinesthetic Resources</h3>
+            <p>Playing audio content related to "{searchInput}".</p>
+          </div>
+        )}
+      </>
+    );
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <h2>Select Your Learning Preferences</h2>
@@ -68,6 +99,10 @@ const LearningPreferences = () => {
 
       <div style={{ marginTop: '20px' }}>
         <p>Selected Preferences: <strong>{preferences.join(', ') || 'None'}</strong></p>
+      </div>
+
+      <div style={{ marginTop: '20px' }}>
+        {renderOutputBoxes()}
       </div>
     </div>
   );
