@@ -10,7 +10,7 @@ function App() {
   const tasks = useQuery(api.tasks.get);
   return (
     <div className="App">
-      <h1>Welcome to EdYou</h1>
+      <h1>EdYou</h1>
       <LearningPreferences />
      
     </div>
