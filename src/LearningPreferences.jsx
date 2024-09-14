@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useAction } from "convex/react";
+import { api } from "../convex/_generated/api";
 
 const LearningPreferences = () => {
   // State to store selected preferences and search input
@@ -54,6 +56,11 @@ const LearningPreferences = () => {
       </>
     );
   };
+
+//   const handleVideo = async () => {
+//     // Call the Convex action with inputText
+//     const result = await getVideoLinks({ inputText: "example input" });
+//   };
 
   return (
     <div style={{ padding: '20px' }}>
