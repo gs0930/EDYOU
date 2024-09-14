@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
-
+//import { useAction } from "convex/react";
+import { useAction } from "convex/react";
+import { api } from "./convex/_generated/api";
 
 const LearningPreferences = () => {
   // State to store selected preferences and search input
   const [preferences, setPreferences] = useState([]);
   const [searchInput, setSearchInput] = useState('');
+
+  const getVideoLinks = useAction(api.tasks.getVideoLinks);
+
 
   // Handler 
   const handlePreferenceChange = (selectedPreference) => {
@@ -23,6 +28,12 @@ const LearningPreferences = () => {
   // Submit handler for the search bar
   const handleSearchSubmit = (e) => {
     e.preventDefault();
+  };
+
+  const getVideos = async () => {
+    // Call the Convex action with inputText
+    // const result = await getVideoLinks({ inputText: "example input" });
+    const videos = await getVideoLinks({ inputText: "example input" });
   };
 
   const renderOutputBoxes = () => {
