@@ -36,3 +36,20 @@
     transform: rotate(360deg);
   }
 }
+
+
+button {
+  margin: 5px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+button.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+input {
+  padding: 10px;
+  margin: 10px;
+}
