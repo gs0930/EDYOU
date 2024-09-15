@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAction } from "convex/react";
 import { api } from "./convex/_generated/api";
+// import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown'
 
 const LearningPreferences = () => {
   const [preferences, setPreferences] = useState([]);
@@ -133,8 +135,8 @@ const LearningPreferences = () => {
         )}
         {preferences.includes('Textual') && (
           <div className="output-box textual-box">
-            <h3>Textual Resources</h3>
-            <p>{markdown}</p>
+            <h3>Textual Explanations</h3>
+            <Markdown>{markdown}</Markdown>
           </div>
         )}
         {preferences.includes('Audio') && (
