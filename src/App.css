@@ -100,29 +100,29 @@ input {
   display: flex;
   flex-wrap: wrap;
   gap: 20px; /* Optional: Adds spacing between the video containers */
-  justify-content: center; /* Center the videos horizontally */
+  justify-content: center; 
 }
 
 .video-wrapper {
   flex: 1 1 45%; /* Adjust the width of each video wrapper to be around 45% */
   max-width: 560px; /* Set a maximum width to match the iframe */
-  margin-bottom: 20px; /* Optional: Adds space between rows of videos */
+  margin-bottom: 20px; 
 }
 
 h4 {
   width: 100%; /* Ensure the heading takes up full width */
   text-align: center; /* Center the "Images" heading */
-  margin-bottom: 20px; /* Add some space below the heading */
+  margin-bottom: 20px; 
   font-size:20px;
 }
 
 .navbar {
-  background-color: #8ac0f7; /* Optional: Add background color for the navbar */
+  background-color: #8ac0f7; 
   padding: 10px 0;
   position: sticky;
   top: 0;
   width: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for depth */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .title {
