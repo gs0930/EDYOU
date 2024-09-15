@@ -92,7 +92,7 @@ const LearningPreferences = () => {
         {preferences.includes('Visual') && (
           <div className="output-box visual-box">
             <h3>Visual Resources</h3>
-            <h5>Videos</h5>
+            <h4>Videos</h4>
             
             <div className="videos-container">
               {videoLinks.length > 0 ? (
@@ -114,8 +114,7 @@ const LearningPreferences = () => {
             </div>
 
             <div className="videos-container">
-              <h5>Images</h5>
-       
+              <h4>Images</h4>
               {images.length > 0 && images[0].length > 0 ? (
                 images[0].map((imageUrl, index) => (
                   <div key={index} className="image-wrapper">
