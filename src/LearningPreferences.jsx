@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
-//import { useAction } from "convex/react";
 import { useAction } from "convex/react";
 import { api } from "./convex/_generated/api";
 
 const LearningPreferences = () => {
-  // State to store selected preferences and search input
   const [preferences, setPreferences] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-
+  const [isSubmitted, setIsSubmitted] = useState(false); // New state to track form submission
   const getVideoLinks = useAction(api.tasks.getVideoLinks);
 
-
-  // Handler 
   const handlePreferenceChange = (selectedPreference) => {
     setPreferences((prevPreferences) =>
       prevPreferences.includes(selectedPreference)
@@ -20,29 +16,50 @@ const LearningPreferences = () => {
     );
   };
 
-  // Handler for search input change
   const handleSearchInputChange = (e) => {
     setSearchInput(e.target.value);
   };
 
-  // Submit handler for the search bar
   const handleSearchSubmit = (e) => {
     e.preventDefault();
+    setIsSubmitted(true); // Set isSubmitted to true when the form is submitted
   };
 
-  const getVideos = async () => {
-    // Call the Convex action with inputText
-    // const result = await getVideoLinks({ inputText: "example input" });
-    const videos = await getVideoLinks({ inputText: "example input" });
+  const getVideos = () => {
+    console.log(searchInput);
+    const videos = getVideoLinks({ inputText: searchInput });
+    return videos;
   };
 
   const renderOutputBoxes = () => {
+    const videos = getVideos();
     return (
       <>
         {preferences.includes('Visual') && (
           <div className="output-box visual-box">
             <h3>Visual Resources</h3>
             <p>Displaying visual content related to "{searchInput}".</p>
+            <div className="videos-container">
+              {/* {videos && videos.length > 0 ? (
+                videos.map((videoLink, index) => (
+                  <div key={index} className="video-wrapper">
+                    <a href={videoLink} target="_blank" rel="noopener noreferrer">
+                      <iframe
+                        width="560"
+                        height="315"
+                        src={`${videoLink.replace('watch?v=', 'embed/')}`}
+                        title={`YouTube video player ${index}`}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </a>
+                  </div>
+                ))
+              ) : (
+                <p>No videos found for the search input.</p>
+              )} */}
+            </div>
           </div>
         )}
         {preferences.includes('Textual') && (
@@ -60,17 +77,12 @@ const LearningPreferences = () => {
         {preferences.includes('Kinesthetic') && (
           <div className="output-box kinesthetic-box">
             <h3>Kinesthetic Resources</h3>
-            <p>Playing audio content related to "{searchInput}".</p>
+            <p>Displaying kinesthetic content related to "{searchInput}".</p>
           </div>
         )}
       </>
     );
   };
-
-//   const handleVideo = async () => {
-//     // Call the Convex action with inputText
-//     const result = await getVideoLinks({ inputText: "example input" });
-//   };
 
   return (
     <div style={{ padding: '20px' }}>
@@ -119,7 +131,7 @@ const LearningPreferences = () => {
       </div>
 
       <div style={{ marginTop: '20px' }}>
-        {renderOutputBoxes()}
+        {isSubmitted && renderOutputBoxes()} {/* Only render output boxes after submission */}
       </div>
     </div>
   );
