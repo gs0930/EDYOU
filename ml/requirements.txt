@@ -4,5 +4,7 @@ youtube_search
 python-dotenv
 fastapi[standard]
 uvicorn
+openai
+
 
 

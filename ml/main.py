@@ -8,6 +8,7 @@ from PIL import Image
 from io import BytesIO
 import os
 import ast
+from agent_rag.run_suno import generate_music_video
 
 # Pydantic model for video links
 class VideoLinksResponse(BaseModel):
@@ -24,7 +25,7 @@ class MusicVideoResponse(BaseModel):
 
 app = FastAPI()
 
-from agent_rag.rag import llm_call, youtube_search, tavily_search, get_content_from_tavily_search, image_search, sys_message, agent_call
+from agent_rag.rag import llm_call, youtube_search, tavily_search, get_content_from_tavily_search, image_search, sys_message, sys_message_lyrics, sys_message_practice, agent_call
 
 # Route for video links
 @app.get("/get-video-links", response_model=VideoLinksResponse)
@@ -41,15 +42,26 @@ async def get_markdown(input_text: str):
     # Simulate markdown text generation from the input text
     response = tavily_search(input_text)
     content = get_content_from_tavily_search(response, input_text)
-    markdown_text = agent_call(sys_message, input_text, content)
+    markdown_text = agent_call(sys_message, input_text, content).replace("```python", "").replace("```", "")
+    return MarkdownResponse(markdown_text=markdown_text)
+
+@app.get("/get-kinaesthetic-markdown", response_model=MarkdownResponse)
+async def get_markdown(input_text: str):
+    # Simulate markdown text generation from the input text
+    response = tavily_search(input_text)
+    content = get_content_from_tavily_search(response, input_text)
+    markdown_text = agent_call(sys_message_practice, input_text, content + "\n" + "[END]").replace("```python", "").replace("```", "")
     return MarkdownResponse(markdown_text=markdown_text)
 
 # Route for music video links
 @app.get("/get-music-videos", response_model=MusicVideoResponse)
 async def get_music_videos(input_text: str):
     # Simulate music video link generation
-    music_video_links = [f"https://example.com/music/{i}" for i in range(3)]
-    return MusicVideoResponse(music_video_links=music_video_links)
+    response = tavily_search(input_text)
+    content = get_content_from_tavily_search(response, input_text)
+    lyrics = agent_call(sys_message_lyrics, input_text, content)
+    music_video_links = generate_music_video(lyrics)
+    return MusicVideoResponse(music_video_links=[music_video_links])
 
 # Route for loaded images
 @app.get("/get-loaded-images")
@@ -58,7 +70,7 @@ async def get_loaded_images(input_text: str):
     image_search_results = image_search(input_text)
     print(image_search_results)
     # load the urls and return the loaded images
-    loaded_images = get_images(image_search_results)
+    loaded_images = get_images(image_search_results )
     # loaded_images = [f"https://example.com/image/{i}.jpg" for i in range(5)]
     return loaded_images
 
@@ -67,8 +79,6 @@ IMAGE_DIR = "downloaded_images"
 
 # Ensure the directory exists
 os.makedirs(IMAGE_DIR, exist_ok=True)
-
-
 def get_images(image_urls_and_titles: tuple[list[str],list[str]]):
 
     image_urls, titles = image_urls_and_titles
