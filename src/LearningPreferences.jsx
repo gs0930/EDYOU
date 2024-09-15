@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useAction } from "convex/react";
 import { api } from "./convex/_generated/api";
-// import ReactMarkdown from 'react-markdown';
-import Markdown from 'react-markdown'
+import Markdown from 'react-markdown';
 
 const LearningPreferences = () => {
   const [preferences, setPreferences] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false); 
-  const [videoLinks, setVideoLinks] = useState([]); 
-  const [images, setImages] = useState([]); 
-  const [markdown, setMarkdown] = useState(''); 
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [videoLinks, setVideoLinks] = useState([]);
+  const [images, setImages] = useState([]);
+  const [musicVideos, setMusicVideos] = useState([]);
+  const [markdown, setMarkdown] = useState('');
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const getVideoLinks = useAction(api.tasks.getVideoLinks);
   const getMarkdown = useAction(api.tasks.getMarkdown);
   const getLoadedImages = useAction(api.tasks.getLoadedImages);
-
+  const getMusicVideos = useAction(api.tasks.getMusicVideos);
   const handlePreferenceChange = (selectedPreference) => {
     setPreferences((prevPreferences) =>
       prevPreferences.includes(selectedPreference)
@@ -31,14 +32,14 @@ const LearningPreferences = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    setIsSubmitted(true); 
-    setIsLoading(true); 
+    setIsSubmitted(true);
+    setIsLoading(true);
   };
 
   const getVideos = async () => {
     try {
       const response = await fetch(`http://localhost:8000/get-video-links?input_text=${searchInput}`);
-      const videos = await response.json(); 
+      const videos = await response.json();
       return videos.video_links || [];
     } catch (error) {
       console.error('Error fetching video links:', error);
@@ -68,8 +69,25 @@ const LearningPreferences = () => {
     }
   };
 
+  const getAudio = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/get-music-videos?input_text=${searchInput}`);
+      const music_videos = await response.json();
+      return music_videos.music_video_links || [];
+    } catch (error) {
+      console.error('Error fetching music video links:', error);
+      return [];
+    }
+  };
+
+
   const convertToEmbedUrl = (url) => {
-    const videoId = url.split('v=')[1]?.split('&')[0]; 
+    const videoId = url.split('v=')[1]?.split('&')[0];
+    return `https://www.youtube.com/embed/${videoId}`;
+  };
+
+  const embedURL = (url) => {
+    const videoId = url.split('v=')[1]?.split('&')[0];
     return `https://www.youtube.com/embed/${videoId}`;
   };
 
@@ -79,14 +97,17 @@ const LearningPreferences = () => {
         const videos = await getVideos();
         const images = await getImages();
         const text = await getText();
+        const musicVideos = await getAudio();
         setVideoLinks(videos);
         setImages(images);
         setMarkdown(text);
-        setIsLoading(false); 
+        setMusicVideos(musicVideos);
+
+        setIsLoading(false);
       };
       fetchData();
     }
-  }, [isSubmitted]); 
+  }, [isSubmitted]);
 
   const renderOutputBoxes = () => {
     return (
@@ -95,7 +116,7 @@ const LearningPreferences = () => {
           <div className="output-box visual-box">
             <h3>Visual Resources</h3>
             <h4>Videos</h4>
-            
+
             <div className="videos-container">
               {videoLinks.length > 0 ? (
                 videoLinks.map((videoLink, index) => (
@@ -122,8 +143,8 @@ const LearningPreferences = () => {
                   <div key={index} className="image-wrapper">
                     <img
                       src={imageUrl}
-                      alt={`related visual content ${index}`}  
-                      style={{ width: 'auto', height: '200px', maxHeight: '200px', objectFit: 'contain' }} 
+                      alt={`related visual content ${index}`}
+                      style={{ width: 'auto', height: '200px', maxHeight: '200px', objectFit: 'contain' }}
                     />
                   </div>
                 ))
@@ -143,6 +164,19 @@ const LearningPreferences = () => {
           <div className="output-box audio-box">
             <h3>Audio Resources</h3>
             <p>Playing audio content related to "{searchInput}".</p>
+            <div className="audio-container">
+              {musicVideos ? (
+                <iframe
+                  width="300"
+                  height="315"
+                  src={musicVideos}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              ) : (
+                <p>No videos found for the search input.</p>
+              )}
+            </div>
           </div>
         )}
         {preferences.includes('Kinesthetic') && (
@@ -205,10 +239,12 @@ const LearningPreferences = () => {
 
       {isSubmitted && (
         <div style={{ marginTop: '20px' }}>
-          {isLoading ? <p>Loading resources...</p> : renderOutputBoxes()} 
+          {isLoading ? <p>Loading resources...</p> : renderOutputBoxes()}
         </div>
       )}
     </div>
+
+
   );
 };
 
