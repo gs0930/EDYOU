@@ -5,11 +5,8 @@ import requests
 import os
 from dotenv import load_dotenv
 import ast
+from .vector_search import vector_search_response
 load_dotenv()
-
-
-def llm_call():
-    return "Hello from the LLM"
 
 
 def youtube_search(query, n = 5):
@@ -67,6 +64,23 @@ def image_search(query):
     urls, titles = [], []
     search_outs = tavily_search(query=query)
     context = get_content_from_tavily_search(search_outs)
+    llm_output = agent_call(llm_input=sys_message_search, query=query, context=context + "\n" + "[END]").replace("```python", "").replace("```", "").split(" = ")[-1]
+    list_converted = ast.literal_eval(llm_output)
+    print(list_converted)
+    for img_caption in list_converted:
+        url, title = ddgs_search(img_caption)
+        urls.append(url)
+        titles.append(title)
+    return urls, titles
+
+
+
+def image_search_vs(query):
+    # defaults to 5 based on prompt
+    urls, titles = [], []
+    # search_outs = tavily_search(query=query)
+    # context = get_content_from_tavily_search(search_outs)
+    context = vector_search_response(query)
     llm_output = agent_call(llm_input=sys_message_search, query=query, context=context + "\n" + "[END]").replace("```python", "").replace("```", "").split(" = ")[-1]
     list_converted = ast.literal_eval(llm_output)
     print(list_converted)
