@@ -107,9 +107,9 @@ async def get_loaded_images(input_text: str):
     image_search_results = image_search(input_text)
     print(image_search_results)
     # load the urls and return the loaded images
-    loaded_images = get_images(image_search_results)
+    # loaded_images = get_images(image_search_results)
     # loaded_images = [f"https://example.com/image/{i}.jpg" for i in range(5)]
-    return loaded_images
+    return image_search_results
 
 # # Route for loaded images vector search
 # @app.get("/get-loaded-images-vs")
