@@ -55,13 +55,13 @@ async def get_markdown(input_text: str):
     markdown_text = agent_call(sys_message, input_text, content).replace("```python", "").replace("```", "")
     return MarkdownResponse(markdown_text=markdown_text)
 
-# Route for markdown text generation
-@app.get("/get-markdown-vs", response_model=MarkdownResponse)
-async def get_markdown_vs(input_text: str):
-    # Simulate markdown text generation from the input text
-    content = vector_search_response(input_text)
-    markdown_text = agent_call(sys_message, input_text, content).replace("```python", "").replace("```", "")
-    return MarkdownResponse(markdown_text=markdown_text)
+# # Route for markdown text generation
+# @app.get("/get-markdown-vs", response_model=MarkdownResponse)
+# async def get_markdown_vs(input_text: str):
+#     # Simulate markdown text generation from the input text
+#     content = vector_search_response(input_text)
+#     markdown_text = agent_call(sys_message, input_text, content).replace("```python", "").replace("```", "")
+#     return MarkdownResponse(markdown_text=markdown_text)
 
 
 @app.get("/get-kinaesthetic-markdown", response_model=MarkdownResponse)
@@ -72,31 +72,32 @@ async def get_markdown(input_text: str):
     markdown_text = agent_call(sys_message_practice, input_text, content + "\n" + "[END]").replace("```python", "").replace("```", "")
     return MarkdownResponse(markdown_text=markdown_text)
 
-@app.get("/get-kinaesthetic-markdown-vs", response_model=MarkdownResponse)
-async def get_markdown_vs(input_text: str):
-    # Simulate markdown text generation from the input text
-    content = vector_search_response(input_text)
-    markdown_text = agent_call(sys_message_practice, input_text, content + "\n" + "[END]").replace("```python", "").replace("```", "")
-    return MarkdownResponse(markdown_text=markdown_text)
+# @app.get("/get-kinaesthetic-markdown-vs", response_model=MarkdownResponse)
+# async def get_markdown_vs(input_text: str):
+#     # Simulate markdown text generation from the input text
+#     content = vector_search_response(input_text)
+#     markdown_text = agent_call(sys_message_practice, input_text, content + "\n" + "[END]").replace("```python", "").replace("```", "")
+#     return MarkdownResponse(markdown_text=markdown_text)
 
 # Route for music video links web search
 @app.get("/get-music-videos", response_model=MusicVideoResponse)
 async def get_music_videos(input_text: str):
     # Simulate music video link generation
-    response = tavily_search(input_text)
-    content = get_content_from_tavily_search(response, input_text)
-    lyrics = agent_call(sys_message_lyrics, input_text, content)
-    music_video_links = generate_music_video(lyrics)
-    return MusicVideoResponse(music_video_links=[music_video_links])
+    # response = tavily_search(input_text)
+    # content = get_content_from_tavily_search(response, input_text)
+    # lyrics = agent_call(sys_message_lyrics, input_text, content)
+    # music_video_links = generate_music_video(lyrics)
+    return MusicVideoResponse(music_video_links=["https://cdn1.suno.ai/51005207-c0b4-47d9-900b-8d5caf257a5a.mp4"])
+    # return MusicVideoResponse(music_video_links=music_video_links)
 
-# Route for music video links
-@app.get("/get-music-videos-vs", response_model=MusicVideoResponse)
-async def get_music_videos_vs(input_text: str):
-    # Simulate music video link generation
-    content = vector_search_response(input_text)
-    lyrics = agent_call(sys_message_lyrics, input_text, content)
-    music_video_links = generate_music_video(lyrics)
-    return MusicVideoResponse(music_video_links=[music_video_links])
+# # Route for music video links
+# @app.get("/get-music-videos-vs", response_model=MusicVideoResponse)
+# async def get_music_videos_vs(input_text: str):
+#     # Simulate music video link generation
+#     content = vector_search_response(input_text)
+#     lyrics = agent_call(sys_message_lyrics, input_text, content)
+#     music_video_links = generate_music_video(lyrics)
+#     return MusicVideoResponse(music_video_links=[music_video_links])
 
 
 # Route for loaded images web search 
@@ -106,20 +107,20 @@ async def get_loaded_images(input_text: str):
     image_search_results = image_search(input_text)
     print(image_search_results)
     # load the urls and return the loaded images
-    loaded_images = get_images(image_search_results )
+    loaded_images = get_images(image_search_results)
     # loaded_images = [f"https://example.com/image/{i}.jpg" for i in range(5)]
     return loaded_images
 
-# Route for loaded images vector search
-@app.get("/get-loaded-images-vs")
-async def get_loaded_images_vs(input_text: str):
-    # Simulate loading images from input text
-    image_search_results = image_search_vs(input_text)
-    print(image_search_results)
-    # load the urls and return the loaded images
-    loaded_images = get_images(image_search_results )
-    # loaded_images = [f"https://example.com/image/{i}.jpg" for i in range(5)]
-    return image_search_results
+# # Route for loaded images vector search
+# @app.get("/get-loaded-images-vs")
+# async def get_loaded_images_vs(input_text: str):
+#     # Simulate loading images from input text
+#     image_search_results = image_search_vs(input_text)
+#     print(image_search_results)
+#     # load the urls and return the loaded images
+#     loaded_images = get_images(image_search_results )
+#     # loaded_images = [f"https://example.com/image/{i}.jpg" for i in range(5)]
+#     return image_search_results
 
 
 # Directory to save the downloaded images
