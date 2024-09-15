@@ -95,3 +95,22 @@ input {
   margin: 0;
   color: #666;
 }
+
+.videos-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Optional: Adds spacing between the video containers */
+  justify-content: center; /* Center the videos horizontally */
+}
+
+.video-wrapper {
+  flex: 1 1 45%; /* Adjust the width of each video wrapper to be around 45% */
+  max-width: 560px; /* Set a maximum width to match the iframe */
+  margin-bottom: 20px; /* Optional: Adds space between rows of videos */
+}
+
+h5 {
+  width: 100%; /* Ensure the heading takes up full width */
+  text-align: center; /* Center the "Images" heading */
+  margin-bottom: 20px; /* Add some space below the heading */
+}

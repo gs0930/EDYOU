@@ -4,5 +4,6 @@ youtube_search
 python-dotenv
 fastapi[standard]
 uvicorn
-
+pillow
+duckduckgo_search
 

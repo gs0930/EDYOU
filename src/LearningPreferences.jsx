@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAction } from "convex/react";
 import { api } from "./convex/_generated/api";
 
 const LearningPreferences = () => {
   const [preferences, setPreferences] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false); // New state to track form submission
+  const [isSubmitted, setIsSubmitted] = useState(false); 
+  const [videoLinks, setVideoLinks] = useState([]); 
+  const [images, setImages] = useState([]); 
+  const [markdown, setMarkdown] = useState(''); 
+  const [isLoading, setIsLoading] = useState(false); 
+
   const getVideoLinks = useAction(api.tasks.getVideoLinks);
+  const getMarkdown = useAction(api.tasks.getMarkdown);
+  const getLoadedImages = useAction(api.tasks.getLoadedImages);
 
   const handlePreferenceChange = (selectedPreference) => {
     setPreferences((prevPreferences) =>
@@ -22,50 +29,113 @@ const LearningPreferences = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    setIsSubmitted(true); // Set isSubmitted to true when the form is submitted
+    setIsSubmitted(true); 
+    setIsLoading(true); 
   };
 
-  const getVideos = () => {
-    console.log(searchInput);
-    const videos = getVideoLinks({ inputText: searchInput });
-    return videos;
+  const getVideos = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/get-video-links?input_text=${searchInput}`);
+      const videos = await response.json(); 
+      return videos.video_links || [];
+    } catch (error) {
+      console.error('Error fetching video links:', error);
+      return [];
+    }
   };
+
+  const getImages = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/get-loaded-images?input_text=${searchInput}`);
+      const images = await response.json();
+      return images || [];
+    } catch (error) {
+      console.error('Error fetching images:', error);
+      return [];
+    }
+  };
+
+  const getText = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/get-markdown?input_text=${searchInput}`);
+      const markdown = await response.json();
+      return markdown.markdown_text;
+    } catch (error) {
+      console.error('Error fetching markdown:', error);
+      return '';
+    }
+  };
+
+  const convertToEmbedUrl = (url) => {
+    const videoId = url.split('v=')[1]?.split('&')[0]; 
+    return `https://www.youtube.com/embed/${videoId}`;
+  };
+
+  useEffect(() => {
+    if (isSubmitted) {
+      const fetchData = async () => {
+        const videos = await getVideos();
+        const images = await getImages();
+        const text = await getText();
+        setVideoLinks(videos);
+        setImages(images);
+        setMarkdown(text);
+        setIsLoading(false); 
+      };
+      fetchData();
+    }
+  }, [isSubmitted]); 
 
   const renderOutputBoxes = () => {
-    const videos = getVideos();
     return (
       <>
         {preferences.includes('Visual') && (
           <div className="output-box visual-box">
             <h3>Visual Resources</h3>
-            <p>Displaying visual content related to "{searchInput}".</p>
+            <h5>Videos</h5>
+            
             <div className="videos-container">
-              {/* {videos && videos.length > 0 ? (
-                videos.map((videoLink, index) => (
+              {videoLinks.length > 0 ? (
+                videoLinks.map((videoLink, index) => (
                   <div key={index} className="video-wrapper">
-                    <a href={videoLink} target="_blank" rel="noopener noreferrer">
-                      <iframe
-                        width="560"
-                        height="315"
-                        src={`${videoLink.replace('watch?v=', 'embed/')}`}
-                        title={`YouTube video player ${index}`}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      ></iframe>
-                    </a>
+                    <iframe
+                      width="560"
+                      height="315"
+                      src={convertToEmbedUrl(videoLink)}
+                      title={`YouTube video player ${index}`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
                   </div>
                 ))
               ) : (
                 <p>No videos found for the search input.</p>
-              )} */}
+              )}
+            </div>
+
+            <div className="videos-container">
+              <h5>Images</h5>
+       
+              {images.length > 0 && images[0].length > 0 ? (
+                images[0].map((imageUrl, index) => (
+                  <div key={index} className="image-wrapper">
+                    <img
+                      src={imageUrl}
+                      alt={`related visual content ${index}`}  
+                      style={{ width: 'auto', height: '200px', maxHeight: '200px', objectFit: 'contain' }} 
+                    />
+                  </div>
+                ))
+              ) : (
+                <p>No images found for the search input.</p>
+              )}
             </div>
           </div>
         )}
         {preferences.includes('Textual') && (
           <div className="output-box textual-box">
             <h3>Textual Resources</h3>
-            <p>Displaying textual content related to "{searchInput}".</p>
+            <p>{markdown}</p>
           </div>
         )}
         {preferences.includes('Audio') && (
@@ -123,16 +193,20 @@ const LearningPreferences = () => {
           value={searchInput}
           onChange={handleSearchInputChange}
         />
-        <button type="submit">Search</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Loading...' : 'Search'}
+        </button>
       </form>
 
       <div style={{ marginTop: '20px' }}>
         <p>Selected Preferences: <strong>{preferences.join(', ') || 'None'}</strong></p>
       </div>
 
-      <div style={{ marginTop: '20px' }}>
-        {isSubmitted && renderOutputBoxes()} {/* Only render output boxes after submission */}
-      </div>
+      {isSubmitted && (
+        <div style={{ marginTop: '20px' }}>
+          {isLoading ? <p>Loading resources...</p> : renderOutputBoxes()} 
+        </div>
+      )}
     </div>
   );
 };

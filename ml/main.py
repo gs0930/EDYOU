@@ -24,6 +24,17 @@ class MusicVideoResponse(BaseModel):
 
 app = FastAPI()
 
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with the correct URL of your React app
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 from agent_rag.rag import llm_call, youtube_search, tavily_search, get_content_from_tavily_search, image_search, sys_message, agent_call
 
 # Route for video links
@@ -60,7 +71,7 @@ async def get_loaded_images(input_text: str):
     # load the urls and return the loaded images
     loaded_images = get_images(image_search_results)
     # loaded_images = [f"https://example.com/image/{i}.jpg" for i in range(5)]
-    return loaded_images
+    return image_search_results
 
 # Directory to save the downloaded images
 IMAGE_DIR = "downloaded_images"
@@ -85,7 +96,8 @@ def get_images(image_urls_and_titles: tuple[list[str],list[str]]):
             if img.mode == 'RGBA':  # Check if the image has an alpha channel
                 img = img.convert('RGB')  # Convert to RGB to remove alpha
             img.save(img_path)  # Save each image locally
-            saved_image_paths_and_titles.append((img_path,titles[idx]))
+            normalized_img_path = img_path.replace("\\", "/")
+            saved_image_paths_and_titles.append((normalized_img_path ,titles[idx]))
         else:
             return {"error": f"Image {idx} could not be downloaded from {url}"}
     return [FileResponse(path, filename = title, media_type="image/jpeg") for path, title in saved_image_paths_and_titles]
