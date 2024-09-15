@@ -1,5 +1,6 @@
 import { query } from "./_generated/server";
 import { action } from "./_generated/server";
+import { v } from "convex/values";
 
 export const get = query({
   args: {},
@@ -10,7 +11,7 @@ export const get = query({
 
 export const getVideoLinks = action({
   // Define the arguments the action expects
-  args: { inputText: "string" },
+  args: { inputText: v.string() },
 
   // Handler that processes the request and generates video links
   handler: async ({ inputText }) => {

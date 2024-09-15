@@ -7,12 +7,11 @@ import LearningPreferences from './LearningPreferences';
 import AudioSongGenerator from './components/AudioSongGenerator';
 
 function App() {
- // const tasks = useQuery(api.tasks.get);
+  // const tasks = useQuery(api.tasks.get);
   return (
     <div className="App">
       <h1>EdYou</h1>
       <LearningPreferences />
-      <AudioSongGenerator />
 
     </div>
   );
