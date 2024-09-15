@@ -10,6 +10,12 @@ import os
 import ast
 from agent_rag.run_suno import generate_music_video
 from agent_rag.vector_search import vector_search_response
+from agent_rag.vector_search import load_document
+from fastapi import FastAPI, UploadFile, File, Form
+from fastapi.responses import JSONResponse
+import os
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.document_loaders import TextLoader
 
 # Pydantic model for video links
 class VideoLinksResponse(BaseModel):
@@ -30,14 +36,38 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace with the correct URL of your React app
+    allow_origins=["http://localhost:3000", "http://localhost:8000"],  # Replace with the correct URL of your React app
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-from agent_rag.rag import llm_call, youtube_search, tavily_search, get_content_from_tavily_search, image_search, sys_message, sys_message_lyrics, sys_message_practice, agent_call, image_search_vs
+
+from agent_rag.rag import llm_call, youtube_search, tavily_search, get_content_from_tavily_search, image_search, sys_message, agent_call
+
+filepath = None
+
+# API endpoint to handle file upload and document processing
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    global filepath
+    # Save the uploaded file to the ../ml directory
+    save_directory = "..\ml"
+    file_path = os.path.join(save_directory, file.filename)
+    
+    # Create the directory if it doesn't exist
+    os.makedirs(save_directory, exist_ok=True)
+
+    # Save the file
+    with open(file_path, "wb") as buffer:
+        buffer.write(await file.read())
+
+    # Load and process the document
+    docs = load_document(file_path)
+
+    # For this example, return the first chunk of the document
+    # You can customize this to return more or process further as needed
 
 # Route for video links
 @app.get("/get-video-links", response_model=VideoLinksResponse)
@@ -59,25 +89,25 @@ async def get_markdown(input_text: str):
 @app.get("/get-markdown-vs", response_model=MarkdownResponse)
 async def get_markdown_vs(input_text: str):
     # Simulate markdown text generation from the input text
-    content = vector_search_response(input_text)
+    content = vector_search_response(input_text, filepath)
     markdown_text = agent_call(sys_message, input_text, content).replace("```python", "").replace("```", "")
     return MarkdownResponse(markdown_text=markdown_text)
 
 
-@app.get("/get-kinaesthetic-markdown", response_model=MarkdownResponse)
-async def get_markdown(input_text: str):
-    # Simulate markdown text generation from the input text
-    response = tavily_search(input_text)
-    content = get_content_from_tavily_search(response, input_text)
-    markdown_text = agent_call(sys_message_practice, input_text, content + "\n" + "[END]").replace("```python", "").replace("```", "")
-    return MarkdownResponse(markdown_text=markdown_text)
+# @app.get("/get-kinaesthetic-markdown", response_model=MarkdownResponse)
+# async def get_markdown(input_text: str):
+#     # Simulate markdown text generation from the input text
+#     response = tavily_search(input_text)
+#     content = get_content_from_tavily_search(response, input_text)
+#     markdown_text = agent_call(sys_message_practice, input_text, content + "\n" + "[END]").replace("```python", "").replace("```", "")
+#     return MarkdownResponse(markdown_text=markdown_text)
 
-@app.get("/get-kinaesthetic-markdown-vs", response_model=MarkdownResponse)
-async def get_markdown_vs(input_text: str):
-    # Simulate markdown text generation from the input text
-    content = vector_search_response(input_text)
-    markdown_text = agent_call(sys_message_practice, input_text, content + "\n" + "[END]").replace("```python", "").replace("```", "")
-    return MarkdownResponse(markdown_text=markdown_text)
+# @app.get("/get-kinaesthetic-markdown-vs", response_model=MarkdownResponse)
+# async def get_markdown_vs(input_text: str):
+#     # Simulate markdown text generation from the input text
+#     content = vector_search_response(input_text)
+#     markdown_text = agent_call(sys_message_practice, input_text, content + "\n" + "[END]").replace("```python", "").replace("```", "")
+#     return MarkdownResponse(markdown_text=markdown_text)
 
 # Route for music video links web search
 @app.get("/get-music-videos", response_model=MusicVideoResponse)
@@ -108,7 +138,7 @@ async def get_loaded_images(input_text: str):
     # load the urls and return the loaded images
     loaded_images = get_images(image_search_results )
     # loaded_images = [f"https://example.com/image/{i}.jpg" for i in range(5)]
-    return loaded_images
+    return image_search_results
 
 # Route for loaded images vector search
 @app.get("/get-loaded-images-vs")
@@ -117,7 +147,7 @@ async def get_loaded_images_vs(input_text: str):
     image_search_results = image_search_vs(input_text)
     print(image_search_results)
     # load the urls and return the loaded images
-    loaded_images = get_images(image_search_results )
+    # loaded_images = get_images(image_search_results )
     # loaded_images = [f"https://example.com/image/{i}.jpg" for i in range(5)]
     return image_search_results
 
@@ -143,8 +173,7 @@ def get_images(image_urls_and_titles: tuple[list[str],list[str]]):
             if img.mode == 'RGBA':  # Check if the image has an alpha channel
                 img = img.convert('RGB')  # Convert to RGB to remove alpha
             img.save(img_path)  # Save each image locally
-            normalized_img_path = img_path.replace("\\", "/")
-            saved_image_paths_and_titles.append((normalized_img_path ,titles[idx]))
+            saved_image_paths_and_titles.append((img_path,titles[idx]))
         else:
             return {"error": f"Image {idx} could not be downloaded from {url}"}
     return [FileResponse(path, filename = title, media_type="image/jpeg") for path, title in saved_image_paths_and_titles]

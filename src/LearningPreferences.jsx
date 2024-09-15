@@ -9,7 +9,8 @@ const LearningPreferences = () => {
   const [videoLinks, setVideoLinks] = useState([]); 
   const [images, setImages] = useState([]); 
   const [markdown, setMarkdown] = useState(''); 
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const getVideoLinks = useAction(api.tasks.getVideoLinks);
   const getMarkdown = useAction(api.tasks.getMarkdown);
@@ -31,6 +32,31 @@ const LearningPreferences = () => {
     e.preventDefault();
     setIsSubmitted(true); 
     setIsLoading(true); 
+  };
+
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  const handleFileUpload = async () => {
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      try {
+        const response = await fetch('http://localhost:8000/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (response.ok) {
+          console.log('File uploaded successfully');
+        } else {
+          console.error('Error uploading file');
+        }
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      }
+    }
   };
 
   const getVideos = async () => {
@@ -206,6 +232,12 @@ const LearningPreferences = () => {
           {isLoading ? <p>Loading resources...</p> : renderOutputBoxes()} 
         </div>
       )}
+
+    <div style={{ marginTop: '20px' }}>
+      <h3>Customize with File Upload</h3>
+      <input type="file" accept=".txt" onChange={handleFileChange} />
+      <button onClick={handleFileUpload}>Customize</button>
+    </div>
     </div>
   );
 };
