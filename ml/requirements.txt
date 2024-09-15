@@ -4,6 +4,20 @@ youtube_search
 python-dotenv
 fastapi[standard]
 uvicorn
+openai
 pillow
 duckduckgo_search
+sqlalchemy-iris
+langchain-iris
+testcontainers-iris
+llama-iris
+llama-index
+sentence-transformers
+langchain
+fastembed 
+tiktoken
+python-dotenv
+pandas
+ipykernel
+setuptools
 
