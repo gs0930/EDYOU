@@ -141,6 +141,7 @@ const LearningPreferences = () => {
               {images.length > 0 && images[0].length > 0 ? (
                 images[0].map((imageUrl, index) => (
                   <div key={index} className="image-wrapper">
+                    <p>{images[1][index]}</p>
                     <img
                       src={imageUrl}
                       alt={`related visual content ${index}`}
