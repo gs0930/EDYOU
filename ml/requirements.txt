@@ -1,0 +1,8 @@
+langchain-community 
+tavily-python
+youtube_search
+python-dotenv
+fastapi[standard]
+uvicorn
+
+
