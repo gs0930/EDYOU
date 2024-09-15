@@ -32,7 +32,9 @@ function App() {
  // const tasks = useQuery(api.tasks.get);
   return (
     <div className="App">
-      <h1>EdYou</h1>
+      <nav className="navbar">
+        <h1 className="title">EdYou</h1>
+      </nav>
       <LearningPreferences />
 
     </div>
