@@ -1,70 +1,59 @@
-# Getting Started with Create React App
+# edYOU: AI-Powered Personalized Education App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Video Demo
+[Click here to watch the video demo!](https://drive.google.com/drive/u/0/folders/10lB_ep2qyP8ZkSsr-TvsCmQXrs0U-mCi)
 
-## Available Scripts
+## Project Description
 
-In the project directory, you can run:
+edYOU is an AI-powered education app designed to create personalized educational content tailored to the needs of each student. It ensures that no child is left behind, regardless of their background, abilities, or learning style. By leveraging cutting-edge technologies, edYOU addresses educational inequities and empowers students worldwide to receive high-quality, customized learning experiences.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Inspiration
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Our team, with members from Singapore, Canada and the US, recognized a global issue: educational inequity. Students worldwide face barriers such as limited access to high-quality resources and mismatched learning styles. Moved by this challenge, we developed edYOU to bridge the gap and provide personalized, AI-driven learning resources tailored to individual needs.
 
-### `npm test`
+## What edYOU Does
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+edYOU allows users to input their preferred learning styles and topics of interest. The app generates personalized learning resources using a powerful combination of:
 
-### `npm run build`
+- **Convex's real-time backend platform**
+- **InterSystems IRIS Vector Search** for semantic search across custom documents
+- **Suno's AI music generation technology**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+This ensures that each student gets high-quality educational content suited to their learning preferences and abilities.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## How We Built It
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Frontend:** Built with **React** for a user-friendly and responsive interface.
+- **Backend:** Utilized **FastAPI** and **Node.js** for data processing and API interactions. We integrated:
+  - **Suno AI** for music generation
+  - **Convex** for real-time backend services
+  - **OpenAI/Langchain** for sophisticated text generation
+  - **InterSystems IRIS Vector Search** for semantic search
 
-### `npm run eject`
+We also integrated **Google search** and **image search** to enhance responses with a comprehensive knowledge base.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Challenges We Faced
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **Frontend-backend integration:** Managing real-time data flow between the **React** frontend and the **FastAPI/Node.js** backend was challenging. Ensuring smooth communication without delays required careful troubleshooting.
+- **LLM output fine-tuning:** Controlling the generated text for specific function calls involved intricate prompt engineering.
+- **Time constraints:** We were unable to fully integrate the vector search feature into the frontend before the deadline.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Accomplishments We're Proud Of
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Successfully built a full-stack application incorporating **Convex**, **InterSystems IRIS**, and **Suno AI**.
+- Developed a robust backend that effectively communicates with the frontend for real-time, AI-powered results.
+- Tackled educational inequality by offering personalized learning experiences that adapt to each student's needs.
 
-## Learn More
+## What We Learned
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Gained valuable technical experience in integrating vector search, LLMs, and APIs.
+- Learned the importance of educational equity and the role of technology in creating inclusive learning environments.
+- Strengthened our knowledge of real-time backend integration and the challenges of scaling AI-powered applications.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## What's Next for edYOU
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Enhance personalization with advanced machine learning algorithms to better adapt to individual learning styles.
+- Expand subject coverage by integrating more datasets and enhancing semantic search.
+- Improve scalability for a larger user base and implement accessibility features like text-to-speech and screen readers.
+- Partner with educational institutions to broaden our content offerings and provide both free and affordable resources.
